@@ -1,0 +1,94 @@
+#include<stdio.h> 
+#include<string.h> 
+#include<stdlib.h> 
+#include<unistd.h> 
+#include<sys/types.h> 
+#include<sys/wait.h> 
+#include<readline/readline.h> 
+#include<readline/history.h>
+#include <locale.h>
+  
+
+#define CLEAR() printf("\033[H\033[J")
+// para limpar no Linux, so escrever clear
+
+void diretorio() {
+	char cwd[1024]; 
+	getcwd(cwd, sizeof(cwd));
+	printf("\nDiretório : %s\n", cwd); 
+	// caminho diretorio atual 
+}
+
+int linha(char* comando) {
+	char* linha, *usuario;
+
+    diretorio();
+	linha = readline("Digite seu comando: "); 
+    add_history(linha); 
+    strcpy(comando, linha); 
+}
+
+void formataComando(char* comando, char** comandoFormatado) {
+	int i;
+
+	for (i = 0; i < 100; i++) { 
+		comandoFormatado[i] = strsep(&comando, " "); // separa as palavras
+
+		if (comandoFormatado[i] == NULL)
+			break;
+		if (strlen(comandoFormatado[i]) == 0)
+			i--;
+	}
+}
+
+void help() {
+	printf("\nComandos\n:"
+		"\n- hello: Bem vindo a shell linux"
+		"\n- cd: muda de pasta"
+		"\n- exit: sair do programa"
+		"\n- clear: limpa o terminal do linux "
+		"\n\n");
+}
+
+void procuraComando(char** comando) {
+    if(strcmp(comando[0], "exit") == 0) { // Compara o que foi digitado com "exit"
+        printf("\nCaindo Fora Aqui\n"); 
+		exit(0);
+    }
+    else if(strcmp(comando[0], "help") == 0) { // Compara o que foi digitado com "help"
+        help();
+    }
+    else if(strcmp(comando[0], "hello") == 0) { // Compara o que foi digitado com "hello"
+		char* user;
+        user = getenv("USER");
+        printf("\nCoe %s, Suave?\n", user); 
+	}
+	else if(strcmp(comando[0], "cd") == 0) { // Compara o que foi digitado com "cd"
+		chdir(comando[1]);
+	}
+    else { // Se o comando não exite na nossa shell, tenta execular pelo linux
+        system(comando[0]);
+    }
+} 
+
+int leComando(char* comando, char** comandoFormatado) { 
+	formataComando(comando, comandoFormatado); // Separa todas as palavras digitadas
+	procuraComando(comandoFormatado); // Procura o comando digitado
+}
+
+int main() {
+	char comando[100], *comandoFormatado[100];
+
+    CLEAR();
+    printf("\nCOOOEE RAPAZIADA\n\t!\n\n");
+
+	while(1) { // Loop infinito
+        linha(comando); // Mostra a linha
+		leComando(comando, comandoFormatado); // Recebe o comando
+	}
+} 
+// feito por Patrick Gusmão, Willian Ramalho, Gustavo
+// https://github.com/willianramalho
+// https://github.com/patrickgusmao
+// Instalar no linux para rodar:  sudo apt-get install libreadline-dev 
+// Para compilar: gcc my-shell.c -o exe -lreadline && ./exe
