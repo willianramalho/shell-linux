@@ -87,8 +87,7 @@ int main() {
 		leComando(comando, comandoFormatado); // Recebe o comando
 	}
 } 
-// feito por Patrick Gusmão, Willian Ramalho, Gustavo
+
 // https://github.com/willianramalho
-// https://github.com/patrickgusmao
 // Instalar no linux para rodar:  sudo apt-get install libreadline-dev 
 // Para compilar: gcc my-shell.c -o exe -lreadline && ./exe
